@@ -5,10 +5,10 @@ import { Thought, User } from '../models/Index.js';
 export const getAllThoughts = async (_req: Request, res: Response) => {
     try {
         const thoughts = await Thought.find().populate('reactions');
-        return res.json(thoughts);
+        res.json(thoughts);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
 
@@ -17,12 +17,12 @@ export const getThoughtById = async (req: Request, res: Response) => {
     try {
         const thought = await Thought.findById(req.params.id).populate('reactions');
         if (!thought) {
-            return res.status(404).json({ message: 'Thought not found' });
+            res.status(404).json({ message: 'Thought not found' });
         }
-        return res.json(thought);
+        res.json(thought);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
 
@@ -43,15 +43,13 @@ export const createThought = async (req: Request, res: Response) => {
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
+            res.status(404).json({ message: "User not found" });
         }
 
         res.status(201).json(newThought);
-        return;
     } catch (err) {
         res.status(500).json(err);
-        return res.status(500).json(err);
-    }
+        console.error(err);}
 };
 
 // Put to update a thought by ID
@@ -63,12 +61,12 @@ export const updateThought = async (req: Request, res: Response) => {
             { new: true, runValidators: true }
         );
         if (!updatedThought) {
-            return res.status(404).json({ message: 'Thought not found' });
+            res.status(404).json({ message: 'Thought not found' });
         }
-        return res.json(updatedThought);
+        res.json(updatedThought);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
 
@@ -77,7 +75,8 @@ export const deleteThought = async (req: Request, res: Response) => {
     try {
         const deletedThought = await Thought.findByIdAndDelete(req.params.id);
         if (!deletedThought) {
-            return res.status(404).json({ message: 'Thought not found' });
+            res.status(404).json({ message: 'Thought not found' });
+            return;
         }
 
         // Remove the thought ID from the user's thoughts array
@@ -87,10 +86,10 @@ export const deleteThought = async (req: Request, res: Response) => {
             { new: true }
         );
 
-        return res.json(deletedThought);
+        res.json(deletedThought);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
 
@@ -108,13 +107,13 @@ export const addReaction = async (req: Request, res: Response) => {
         );
 
         if (!updatedThought) {
-            return res.status(404).json({ message: "Thought not found" });
+            res.status(404).json({ message: "Thought not found" });
         }
 
-        return res.status(201).json(updatedThought);
+        res.status(201).json(updatedThought);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
 
@@ -132,12 +131,12 @@ export const removeReaction = async (req: Request, res: Response) => {
         );
 
         if (!updatedThought) {
-            return res.status(404).json({ message: "Thought not found" });
+            res.status(404).json({ message: "Thought not found" });
         }
 
-        return res.json(updatedThought);
+        res.json(updatedThought);
     } catch (err) {
         console.error(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
     }
 };
