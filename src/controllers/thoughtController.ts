@@ -29,28 +29,17 @@ export const getThoughtById = async (req: Request, res: Response) => {
 // Post to create a new thought with a user ID
 export const createThought = async (req: Request, res: Response) => {
     try {
-        // Create the thought
-        const newThought = await Thought.create({
-            thoughtText: req.body.thoughtText,
-            username: req.body.username,
-        });
-
-        // Push the thought ID into the user's thoughts array
-        const updatedUser = await User.findByIdAndUpdate(
+        const newThought = await Thought.create(req.body);
+        await User.findByIdAndUpdate(
             req.body.userId,
             { $push: { thoughts: newThought._id } },
             { new: true }
         );
-
-        if (!updatedUser) {
-            res.status(404).json({ message: "User not found" });
-        }
-
-        res.status(201).json(newThought);
+        res.json(newThought);
     } catch (err) {
         res.status(500).json(err);
-        console.error(err);}
-};
+    }
+}
 
 // Put to update a thought by ID
 export const updateThought = async (req: Request, res: Response) => {
@@ -60,9 +49,6 @@ export const updateThought = async (req: Request, res: Response) => {
             req.body,
             { new: true, runValidators: true }
         );
-        if (!updatedThought) {
-            res.status(404).json({ message: 'Thought not found' });
-        }
         res.json(updatedThought);
     } catch (err) {
         console.error(err);
@@ -74,18 +60,6 @@ export const updateThought = async (req: Request, res: Response) => {
 export const deleteThought = async (req: Request, res: Response) => {
     try {
         const deletedThought = await Thought.findByIdAndDelete(req.params.id);
-        if (!deletedThought) {
-            res.status(404).json({ message: 'Thought not found' });
-            return;
-        }
-
-        // Remove the thought ID from the user's thoughts array
-        await User.findByIdAndUpdate(
-            deletedThought.username,
-            { $pull: { thoughts: req.params.id } },
-            { new: true }
-        );
-
         res.json(deletedThought);
     } catch (err) {
         console.error(err);
@@ -125,7 +99,7 @@ export const removeReaction = async (req: Request, res: Response) => {
         const updatedThought = await Thought.findByIdAndUpdate(
             thoughtId,
             {
-                $pull: { reactions: { reactionId } },
+                $pull: { reactions: { _id: reactionId } }, 
             },
             { new: true }
         );
