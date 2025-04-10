@@ -31,3 +31,5 @@ There are no automated tests for this API, but all routes can be manually tested
 ## Questions
 
 Please reach me at [tristin.tsun@gmail.com](mailto:tristin.tsun@gmail.com) for any questions or inquiries.
+
+[![Demo Video](https://via.placeholder.com/600x300?text=Video+Preview)](https://app.screencastify.com/v3/watch/3AFGDSIcp6ZxpTlOrekA)
